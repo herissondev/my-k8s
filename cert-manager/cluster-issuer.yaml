@@ -1,0 +1,23 @@
+# Using Cert Manager Issuer resource with AWS Route53 DNS01 challenge:
+# Used to generate wildcard certificate for *.example.com or any other domain
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+ name: cert-manager-acme-issuer
+ namespace: cert-manager
+spec:
+ acme:
+   email: myEmail@mail.fr
+   server: https://acme-v02.api.letsencrypt.org/directory # production
+   #server: https://acme-staging-v02.api.letsencrypt.org/directory # staging
+   privateKeySecretRef:
+     name: cert-manager-acme-private-key # auto-generated
+   solvers:
+   - dns01:
+       route53: # AWS Route53 DNS01 challenge
+         accessKeyID: AKIAXXXXXXXXXXXXXX
+         region: eu-west-3
+         # Reference our secret with Secret Key
+         secretAccessKeySecretRef:
+           key: secret-access-key
+           name: cert-manager-aws-secret
